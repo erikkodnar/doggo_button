@@ -12,6 +12,7 @@ pip install -r requirements.txt
 
 echo "Run the application with 'cd server && venv/bin/activate && python doggo_server.py'"
 deactivate
+cd ..
 
 
 echo "---Setting up test client---"
@@ -27,3 +28,4 @@ pip install -r requirements.txt
 
 echo "Run the test client application with 'cd test_client && venv/bin/activate && python main.py'"
 deactivate
+cd ..
