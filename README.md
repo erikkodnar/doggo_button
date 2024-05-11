@@ -1,7 +1,19 @@
 ﻿# doggo_button
 
+## Setup scripts
+
+### Bash
+- Make setup.sh executable
+  - `chmod +x setup.sh`
+- `./setup.sh`
+
+### PowerShell
+- Make sure that the execution policy allows running scripts. This can be adjusted by running Set-ExecutionPolicy RemoteSigned or a similar command in an elevated (administrator) PowerShell session.
+- `./setup.ps1`
+
 ## install
 - `cd server`
+- `python3 -m venv venv`
 - `pip install -r requirements.txt`
 
 ## Run server
