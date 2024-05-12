@@ -8,6 +8,8 @@
 - `./setup.sh`
 
 ### PowerShell
+
+- **UNSUPPORTED** (TODO)
 - Make sure that the execution policy allows running scripts. This can be adjusted by running Set-ExecutionPolicy RemoteSigned or a similar command in an elevated (administrator) PowerShell session.
 - `./setup.ps1`
 

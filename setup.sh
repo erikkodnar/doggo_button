@@ -8,7 +8,7 @@ echo "Activating virtual environment"
 source venv/bin/activate
 
 echo "Installing dependencies"
-pip install -r requirements.txt
+pip install -r requirments.txt
 
 echo "Run the application with 'cd server && venv/bin/activate && python doggo_server.py'"
 deactivate
@@ -24,7 +24,7 @@ echo "Activating virtual environment"
 source venv/bin/activate
 
 echo "Installing dependencies"
-pip install -r requirements.txt
+pip install -r requirments.txt
 
 echo "Run the test client application with 'cd test_client && venv/bin/activate && python main.py'"
 deactivate
