@@ -2,7 +2,12 @@ import socket
 import threading
 import sys
 import base64
-import pyttsx3
+
+from playsound import playsound
+
+sound_id_map = {
+    1: 'assets/snuggles.mp3',
+}
 
 def decode_base64(encoded_bytes: bytes) -> str:
     # Decode the Base64 encoded bytes
@@ -34,11 +39,12 @@ def start_server(host='localhost', port=5000):
         server_socket.close()
         print("Server has been shut down.")
 
-def speak(message: str):
-    engine = pyttsx3.init()
-    engine.say(message)
-    engine.setProperty('rate', 0.25)
-    engine.runAndWait()
+def speak(id: int):
+    if id in sound_id_map:
+        sound_file = sound_id_map[id]
+        playsound(sound_file)
+    else:
+        print(f"Unknown sound ID: {id}")
 
 def handle_client(client_socket):
     try:
@@ -55,7 +61,7 @@ def handle_client(client_socket):
                 response = base64.b64encode(b'pong')
             else:
                 # Speak the received message
-                speak(decoded_data)
+                speak(int(decoded_data))
                 response = base64.b64encode(f'ACK: {decoded_data}'.encode('utf-8'))
 
             client_socket.sendall(response)
