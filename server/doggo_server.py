@@ -3,10 +3,17 @@ import threading
 import sys
 import base64
 
-from playsound import playsound
+# import required module
+from pydub import AudioSegment
+from pydub.playback import play
 
 sound_id_map = {
     1: 'assets/snuggles.mp3',
+    2: 'assets/play.mp3',
+    3: 'assets/pee.mp3',
+    4: 'assets/mom.mp3',
+    5: 'assets/JessieJane.mp3',
+    6: 'assets/dad.mp3',
 }
 
 def decode_base64(encoded_bytes: bytes) -> str:
@@ -42,7 +49,10 @@ def start_server(host='localhost', port=5000):
 def speak(id: int):
     if id in sound_id_map:
         sound_file = sound_id_map[id]
-        playsound(sound_file)
+        # for playing mp3 file
+        sound = AudioSegment.from_mp3(sound_file)
+        print('playing sound using pydub')
+        play(sound)
     else:
         print(f"Unknown sound ID: {id}")
 
@@ -55,13 +65,12 @@ def handle_client(client_socket):
             decoded_data = decode_base64(data)
             print(f"Received data: {decoded_data}")
 
-
             if decoded_data == 'ping':
                 print("Ping received, sending pong...")
                 response = base64.b64encode(b'pong')
             else:
-                # Speak the received message
-                speak(int(decoded_data))
+                # Speak the received message in a separate thread
+                threading.Thread(target=speak, args=(int(decoded_data),), daemon=True).start()
                 response = base64.b64encode(f'ACK: {decoded_data}'.encode('utf-8'))
 
             client_socket.sendall(response)

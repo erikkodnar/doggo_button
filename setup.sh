@@ -1,4 +1,7 @@
 #!/bin/bash
+# Install packaged required for sound file playback
+sudo apt-get install ffmpeg libavcodec-extra
+
 echo "---Setting up server---"
 echo "Creating virtual environment"
 cd server
