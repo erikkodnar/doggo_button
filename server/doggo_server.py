@@ -120,5 +120,9 @@ if __name__ == "__main__":
     
     # Add a delay to ensure the services have started
     time.sleep(10)  # Adjust the sleep time as necessary
+
+    # Manually assign the IP address to wlan1
+    os.system("sudo ip addr add 192.168.4.1/24 dev wlan1")
+    os.system("sudo ip link set wlan1 up")
     
     start_server()
