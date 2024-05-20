@@ -4,6 +4,7 @@ import sys
 import base64
 import json
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor
 from pydub import AudioSegment
 from pydub.playback import play
 
@@ -55,13 +56,13 @@ def speak(id: int, created_at: str):
     if id in preloaded_sounds:
         sound = preloaded_sounds[id]
         created_at_time = datetime.fromisoformat(created_at)
-        
+
         # Store the start time right before playing the sound
         start_time = datetime.now()
         print('playing sound using pydub')
         play(sound)
         end_time = datetime.now()
-        
+
         # Calculate the delay
         delay = (start_time - created_at_time).total_seconds()
         print(f"Time difference between message created and sound starting: {delay} seconds")
@@ -85,7 +86,8 @@ def handle_client(client_socket):
                     message = json.loads(decoded_data)
                     message_id = int(message['id'])
                     created_at = message['created_at']
-                    threading.Thread(target=speak, args=(message_id, created_at), daemon=True).start()
+                    # Submit the speak task to the thread pool executor
+                    executor.submit(speak, message_id, created_at)
                     response = base64.b64encode(f'ACK: {message_id}'.encode('utf-8'))
                 except (ValueError, KeyError) as e:
                     print(f"Error parsing message: {e}")
@@ -106,4 +108,5 @@ def interactive_shell(server_socket):
 
 if __name__ == "__main__":
     preload_sounds()
+    executor = ThreadPoolExecutor(max_workers=4)  # Initialize the thread pool executor with 4 workers
     start_server()
