@@ -2,6 +2,8 @@ import socket
 import base64
 import threading
 import time
+import json
+from datetime import datetime
 
 class Client:
     def __init__(self, host, port):
@@ -61,7 +63,15 @@ class Client:
                     print("Not connected to server.")
                     continue
 
-                base64_message = base64.b64encode(message.encode('utf-8'))
+                message_id = message  # In this example, using the input message as the ID
+                created_at = datetime.now().isoformat()
+                message_dict = {
+                    "id": message_id,
+                    "created_at": created_at
+                }
+
+                json_message = json.dumps(message_dict)
+                base64_message = base64.b64encode(json_message.encode('utf-8'))
                 self.client_socket.sendall(base64_message)
 
                 response = self.client_socket.recv(1024)
