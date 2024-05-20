@@ -2,6 +2,8 @@ import socket
 import threading
 import sys
 import base64
+import json
+from datetime import datetime
 from pydub import AudioSegment
 from pydub.playback import play
 
@@ -49,11 +51,16 @@ def start_server(host='localhost', port=5000):
         server_socket.close()
         print("Server has been shut down.")
 
-def speak(id: int):
+def speak(id: int, created_at: str):
     if id in preloaded_sounds:
         sound = preloaded_sounds[id]
+        start_time = datetime.now()
         print('playing sound using pydub')
         play(sound)
+        end_time = datetime.now()
+        created_at_time = datetime.fromisoformat(created_at)
+        delay = (start_time - created_at_time).total_seconds()
+        print(f"Time difference between message created and sound playing: {delay} seconds")
     else:
         print(f"Unknown sound ID: {id}")
 
@@ -66,12 +73,19 @@ def handle_client(client_socket):
             decoded_data = decode_base64(data)
             print(f"Received data: {decoded_data}")
 
-            if (decoded_data == 'ping'):
+            if decoded_data == 'ping':
                 print("Ping received, sending pong...")
                 response = base64.b64encode(b'pong')
             else:
-                threading.Thread(target=speak, args=(int(decoded_data),), daemon=True).start()
-                response = base64.b64encode(f'ACK: {decoded_data}'.encode('utf-8'))
+                try:
+                    message = json.loads(decoded_data)
+                    message_id = int(message['id'])
+                    created_at = message['created_at']
+                    threading.Thread(target=speak, args=(message_id, created_at), daemon=True).start()
+                    response = base64.b64encode(f'ACK: {message_id}'.encode('utf-8'))
+                except (ValueError, KeyError) as e:
+                    print(f"Error parsing message: {e}")
+                    response = base64.b64encode(b'ERROR')
 
             client_socket.sendall(response)
     finally:
