@@ -4,6 +4,7 @@ import threading
 import sys
 import base64
 import json
+import time
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 from pydub import AudioSegment
@@ -111,8 +112,13 @@ if __name__ == "__main__":
     preload_sounds()
     executor = ThreadPoolExecutor(max_workers=4)  # Initialize the thread pool executor with 4 workers
 
-    # Start the access point
+    # Start the access point services
+    os.system("sudo systemctl unmask hostapd")
+    os.system("sudo systemctl enable hostapd")
     os.system("sudo systemctl start hostapd")
     os.system("sudo systemctl start dnsmasq")
+    
+    # Add a delay to ensure the services have started
+    time.sleep(10)  # Adjust the sleep time as necessary
     
     start_server()
