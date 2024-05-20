@@ -105,4 +105,5 @@ def interactive_shell(server_socket):
             break
 
 if __name__ == "__main__":
-    p
+    preload_sounds()
+    start_server()
