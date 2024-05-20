@@ -22,7 +22,7 @@ class Client:
             attempts = 0
             while attempts < 5:
                 try:
-                    self.client_socket.connect((self.host, self.port))
+                    self.client_socket.connect(('192.168.4.1', 5000))
                     self.connected = True
                     print("Connected to the server.")
                     return

@@ -31,7 +31,7 @@ def decode_base64(encoded_bytes: bytes) -> str:
     decoded_str = decoded_bytes.decode('utf-8')
     return decoded_str
 
-def start_server(host='localhost', port=5000):
+def start_server(host='192.168.4.1', port=5000):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_socket.bind((host, port))
