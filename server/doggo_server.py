@@ -54,13 +54,17 @@ def start_server(host='localhost', port=5000):
 def speak(id: int, created_at: str):
     if id in preloaded_sounds:
         sound = preloaded_sounds[id]
+        created_at_time = datetime.fromisoformat(created_at)
+        
+        # Store the start time right before playing the sound
         start_time = datetime.now()
         print('playing sound using pydub')
         play(sound)
         end_time = datetime.now()
-        created_at_time = datetime.fromisoformat(created_at)
+        
+        # Calculate the delay
         delay = (start_time - created_at_time).total_seconds()
-        print(f"Time difference between message created and sound playing: {delay} seconds")
+        print(f"Time difference between message created and sound starting: {delay} seconds")
     else:
         print(f"Unknown sound ID: {id}")
 
@@ -101,5 +105,4 @@ def interactive_shell(server_socket):
             break
 
 if __name__ == "__main__":
-    preload_sounds()
-    start_server()
+    p
