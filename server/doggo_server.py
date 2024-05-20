@@ -1,3 +1,4 @@
+import os
 import socket
 import threading
 import sys
@@ -109,4 +110,9 @@ def interactive_shell(server_socket):
 if __name__ == "__main__":
     preload_sounds()
     executor = ThreadPoolExecutor(max_workers=4)  # Initialize the thread pool executor with 4 workers
+
+    # Start the access point
+    os.system("sudo systemctl start hostapd")
+    os.system("sudo systemctl start dnsmasq")
+    
     start_server()
