@@ -2,8 +2,6 @@ import socket
 import threading
 import sys
 import base64
-
-# import required module
 from pydub import AudioSegment
 from pydub.playback import play
 
@@ -16,10 +14,16 @@ sound_id_map = {
     6: 'assets/dad.mp3',
 }
 
+# Preload sound files into a dictionary
+preloaded_sounds = {}
+
+def preload_sounds():
+    for id, file_path in sound_id_map.items():
+        sound = AudioSegment.from_mp3(file_path)
+        preloaded_sounds[id] = sound
+
 def decode_base64(encoded_bytes: bytes) -> str:
-    # Decode the Base64 encoded bytes
     decoded_bytes = base64.b64decode(encoded_bytes)
-    # Convert the bytes to a string
     decoded_str = decoded_bytes.decode('utf-8')
     return decoded_str
 
@@ -40,17 +44,14 @@ def start_server(host='localhost', port=5000):
             print(f"Connected by {client_address}")
             threading.Thread(target=handle_client, args=(client_socket,), daemon=True).start()
     except OSError:
-        # Break the loop if the socket is closed to prevent sending on a closed socket
         print("Socket has been closed, shutting down the server.")
     finally:
         server_socket.close()
         print("Server has been shut down.")
 
 def speak(id: int):
-    if id in sound_id_map:
-        sound_file = sound_id_map[id]
-        # for playing mp3 file
-        sound = AudioSegment.from_mp3(sound_file)
+    if id in preloaded_sounds:
+        sound = preloaded_sounds[id]
         print('playing sound using pydub')
         play(sound)
     else:
@@ -65,11 +66,10 @@ def handle_client(client_socket):
             decoded_data = decode_base64(data)
             print(f"Received data: {decoded_data}")
 
-            if decoded_data == 'ping':
+            if (decoded_data == 'ping'):
                 print("Ping received, sending pong...")
                 response = base64.b64encode(b'pong')
             else:
-                # Speak the received message in a separate thread
                 threading.Thread(target=speak, args=(int(decoded_data),), daemon=True).start()
                 response = base64.b64encode(f'ACK: {decoded_data}'.encode('utf-8'))
 
@@ -87,4 +87,5 @@ def interactive_shell(server_socket):
             break
 
 if __name__ == "__main__":
+    preload_sounds()
     start_server()
